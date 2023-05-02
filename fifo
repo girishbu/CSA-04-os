@@ -45,3 +45,11 @@ int main() {
     printf("Total page faults: %d\n", page_faults);
     return 0;
 }
+
+
+
+
+
+
+
+
