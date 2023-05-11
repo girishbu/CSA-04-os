@@ -1,0 +1,52 @@
+#include <stdio.h>
+
+#define MAX_PROCESS 5
+#define MAX_RESOURCE 3
+
+void calculateNeed(int allocation[][MAX_RESOURCE], int max[][MAX_RESOURCE], int need[][MAX_RESOURCE], int available[]) {
+    for (int i = 0; i < MAX_PROCESS; i++) {
+        for (int j = 0; j < MAX_RESOURCE; j++) {
+            need[i][j] = max[i][j] - allocation[i][j];
+        }
+    }
+}
+
+void printMatrix(int matrix[][MAX_RESOURCE], const char *name) {
+    printf("%s matrix:\n", name);
+    for (int i = 0; i < MAX_PROCESS; i++) {
+        for (int j = 0; j < MAX_RESOURCE; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int allocation[MAX_PROCESS][MAX_RESOURCE] = {
+        {1, 1, 2},
+        {2, 1, 2},
+        {3, 0, 1},
+        {0, 2, 0},
+        {1, 1, 2}
+    };
+
+    int max[MAX_PROCESS][MAX_RESOURCE] = {
+        {5, 4, 4},
+        {4, 3, 3},
+        {9, 1, 3},
+        {8, 6, 4},
+        {2, 2, 3}
+    };
+
+    int available[MAX_RESOURCE] = {3, 2, 1};
+
+    int need[MAX_PROCESS][MAX_RESOURCE];
+
+    calculateNeed(allocation, max, need, available);
+
+    printMatrix(allocation, "Allocation");
+    printMatrix(max, "Maximum");
+    printMatrix(need, "Need");
+
+    return 0;
+}
