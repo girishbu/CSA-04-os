@@ -1,0 +1,79 @@
+#include <stdio.h>
+
+#define MAX_PARTITIONS 6
+#define MAX_PROCESSES 5
+
+struct Partition {
+    int size;
+    int allocated;
+};
+
+struct Process {
+    int size;
+    int partitionIndex;
+};
+
+int findBestFitPartition(struct Partition partitions[], int numPartitions, int processSize) {
+    int bestFitIndex = -1;
+    int bestFitSize = __INT_MAX__;
+
+    for (int i = 0; i < numPartitions; i++) {
+        if (partitions[i].allocated == 0 && partitions[i].size >= processSize && partitions[i].size < bestFitSize) {
+            bestFitIndex = i;
+            bestFitSize = partitions[i].size;
+        }
+    }
+
+    return bestFitIndex;
+}
+
+void bestFit(struct Partition partitions[], int numPartitions, struct Process processes[], int numProcesses) {
+    for (int i = 0; i < numProcesses; i++) {
+        int bestFitIndex = findBestFitPartition(partitions, numPartitions, processes[i].size);
+
+        if (bestFitIndex != -1) {
+            partitions[bestFitIndex].allocated = 1;
+            processes[i].partitionIndex = bestFitIndex;
+        }
+    }
+}
+
+void displayMemoryAllocation(struct Partition partitions[], int numPartitions, struct Process processes[], int numProcesses) {
+    printf("Memory Allocation:\n");
+
+    for (int i = 0; i < numProcesses; i++) {
+        int processSize = processes[i].size;
+        int partitionIndex = processes[i].partitionIndex;
+        int partitionSize = partitions[partitionIndex].size;
+
+        printf("Process %d (Size: %d KB) -> Partition %d (Size: %d KB)\n",
+               i + 1, processSize, partitionIndex + 1, partitionSize);
+
+        partitions[partitionIndex].size -= processSize;
+        partitions[partitionIndex].allocated = 0;
+    }
+
+    printf("\nRemaining Memory:\n");
+
+    for (int i = 0; i < numPartitions; i++) {
+        if (partitions[i].allocated == 0) {
+            printf("Partition %d (Size: %d KB)\n", i + 1, partitions[i].size);
+        }
+    }
+}
+
+int main() {
+    struct Partition partitions[MAX_PARTITIONS] = {
+        {300, 0}, {600, 0}, {350, 0}, {200, 0}, {750, 0}, {125, 0}
+    };
+
+    struct Process processes[MAX_PROCESSES] = {
+        {115, -1}, {500, -1}, {358, -1}, {200, -1}, {375, -1}
+    };
+
+    bestFit(partitions, MAX_PARTITIONS, processes, MAX_PROCESSES);
+
+    displayMemoryAllocation(partitions, MAX_PARTITIONS, processes, MAX_PROCESSES);
+
+    return 0;
+}
