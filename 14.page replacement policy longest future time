@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_PAGE_FRAMES 3
+#define MAX_PAGE_REFERENCES 19
+
+int main() {
+    int k;
+    int pageFrames[MAX_PAGE_FRAMES];
+    int pageReferences[MAX_PAGE_REFERENCES] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1};
+    int pageFaults = 0;
+
+    for (int i = 0; i < MAX_PAGE_FRAMES; i++) {
+        pageFrames[i] = -1;
+    }
+
+   
+    for (int i = 0; i < MAX_PAGE_REFERENCES; i++) {
+        int currentPage = pageReferences[i];
+        bool pageFound = false;
+
+       
+        for (int j = 0; j < MAX_PAGE_FRAMES; j++) {
+            if (pageFrames[j] == currentPage) {
+                pageFound = true;
+                break;
+            }
+        }
+
+   
+        if (!pageFound) {
+            int longestFutureTime = -1;
+            int longestFutureTimeIndex = -1;
+
+           
+            for (int j = 0; j < MAX_PAGE_FRAMES; j++) {
+                bool pageFoundInFuture = false;
+
+               
+                for (int k = i + 1; k < MAX_PAGE_REFERENCES; k++) {
+                    if (pageFrames[j] == pageReferences[k]) {
+                        pageFoundInFuture = true;
+                        break;
+                    }
+                }
+                
+                if (!pageFoundInFuture) {
+                    longestFutureTimeIndex = j;
+                    break;
+                }
+                
+                if (longestFutureTimeIndex == -1 ||  k > longestFutureTime) {
+                    longestFutureTime = k;
+                    longestFutureTimeIndex = j;
+                }
+            }
+            
+            pageFrames[longestFutureTimeIndex] = currentPage;
+            pageFaults++;
+        }
+    }
+
+    printf("Number of page faults: %d\n", pageFaults);
+
+    return 0;
+}
