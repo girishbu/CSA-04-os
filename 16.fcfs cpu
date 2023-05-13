@@ -1,0 +1,56 @@
+#include <stdio.h>
+
+#define MAX_PROCESSES 3
+
+struct Process {
+    int burstTime;
+    int waitingTime;
+    int turnaroundTime;
+};
+
+void calculateTimes(struct Process *processes, int numProcesses) {
+    processes[0].waitingTime = 0;
+    processes[0].turnaroundTime = processes[0].burstTime;
+
+    for (int i = 1; i < numProcesses; i++) {
+        processes[i].waitingTime = processes[i - 1].waitingTime + processes[i - 1].burstTime;
+        processes[i].turnaroundTime = processes[i].waitingTime + processes[i].burstTime;
+    }
+}
+
+void printTimes(struct Process *processes, int numProcesses) {
+    printf("Process\tBurst Time\tWaiting Time\tTurnaround Time\n");
+
+    for (int i = 0; i < numProcesses; i++) {
+        printf("P%d\t\t%d\t\t%d\t\t%d\n", i + 1, processes[i].burstTime, processes[i].waitingTime,
+               processes[i].turnaroundTime);
+    }
+
+    float avgWaitingTime = 0, avgTurnaroundTime = 0;
+
+    for (int i = 0; i < numProcesses; i++) {
+        avgWaitingTime += processes[i].waitingTime;
+        avgTurnaroundTime += processes[i].turnaroundTime;
+    }
+
+    avgWaitingTime /= numProcesses;
+    avgTurnaroundTime /= numProcesses;
+
+    printf("\nAverage Waiting Time: %.2f\n", avgWaitingTime);
+    printf("Average Turnaround Time: %.2f\n", avgTurnaroundTime);
+}
+
+int main() {
+    struct Process processes[MAX_PROCESSES] = {
+        {10, 0, 0},
+        {15, 0, 0},
+        {25, 0, 0}
+    };
+
+    int numProcesses = sizeof(processes) / sizeof(processes[0]);
+
+    calculateTimes(processes, numProcesses);
+    printTimes(processes, numProcesses);
+
+    return 0;
+}
