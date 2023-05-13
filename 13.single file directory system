@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_FILES 100
+#define MAX_FILENAME_LENGTH 50
+
+struct File {
+    char name[MAX_FILENAME_LENGTH];
+};
+
+struct Directory {
+    struct File files[MAX_FILES];
+    int count;
+};
+
+void initializeDirectory(struct Directory *directory) {
+    directory->count = 0;
+}
+
+void createFile(struct Directory *directory, const char *filename) {
+    if (directory->count >= MAX_FILES) {
+        printf("Directory is full. Cannot create more files.\n");
+        return;
+    }
+
+    if (strlen(filename) > MAX_FILENAME_LENGTH - 1) {
+        printf("File name is too long.\n");
+        return;
+    }
+
+    for (int i = 0; i < directory->count; i++) {
+        if (strcmp(directory->files[i].name, filename) == 0) {
+            printf("File '%s' already exists.\n", filename);
+            return;
+        }
+    }
+
+    struct File newFile;
+    strcpy(newFile.name, filename);
+    directory->files[directory->count] = newFile;
+    directory->count++;
+
+    printf("File '%s' created successfully.\n", filename);
+}
+
+void deleteFile(struct Directory *directory, const char *filename) {
+    int found = 0;
+    int index = -1;
+
+    for (int i = 0; i < directory->count; i++) {
+        if (strcmp(directory->files[i].name, filename) == 0) {
+            found = 1;
+            index = i;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("File '%s' does not exist.\n", filename);
+        return;
+    }
+
+    for (int i = index; i < directory->count - 1; i++) {
+        directory->files[i] = directory->files[i + 1];
+    }
+
+    directory->count--;
+
+    printf("File '%s' deleted successfully.\n", filename);
+}
+
+void listFiles(struct Directory *directory) {
+    if (directory->count == 0) {
+        printf("Directory is empty.\n");
+        return;
+    }
+
+    printf("Files in the directory:\n");
+
+    for (int i = 0; i < directory->count; i++) {
+        printf("%s\n", directory->files[i].name);
+    }
+}
+
+int main() {
+    struct Directory directory;
+    initializeDirectory(&directory);
+
+    createFile(&directory, "file1.txt");
+    createFile(&directory, "file2.txt");
+    createFile(&directory, "file3.txt");
+    listFiles(&directory);
+
+    deleteFile(&directory, "file2.txt");
+    listFiles(&directory);
+
+    createFile(&directory, "file4.txt");
+    listFiles(&directory);
+
+    createFile(&directory, "file1.txt"); 
+    deleteFile(&directory, "file5.txt"); 
+
+    return 0;
+}
