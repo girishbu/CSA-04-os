@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_TRACKS 100
+
+int absDiff(int a, int b) {
+    return (a > b) ? (a - b) : (b - a);
+}
+
+int main() {
+    int tracks[MAX_TRACKS];
+    int numTracks = 9;
+    int trackPositions[9] = {55, 58, 60, 70, 18, 90, 150, 160, 184};
+    int headPosition, totalHeadMovement = 0;
+
+    for (int i = 0; i < numTracks; i++) {
+        tracks[i] = trackPositions[i];
+    }
+
+    printf("Track Positions: ");
+    for (int i = 0; i < numTracks; i++) {
+        printf("%d ", tracks[i]);
+    }
+    printf("\n");
+
+    printf("Enter initial head position: ");
+    scanf("%d", &headPosition);
+
+    for (int i = 0; i < numTracks; i++) {
+        totalHeadMovement += absDiff(headPosition, tracks[i]);
+        headPosition = tracks[i];
+    }
+
+    printf("Total Head Movement: %d\n", totalHeadMovement);
+    printf("Average Head Movement: %.2f\n", (float)totalHeadMovement / numTracks);
+
+    return 0;
+}
