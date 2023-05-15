@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_USERS 3
+#define MAX_FILES 2
+
+typedef struct {
+    char username[50];
+    char files[MAX_FILES][50];
+    int fileCount;
+} UserDirectory;
+
+typedef struct {
+    UserDirectory users[MAX_USERS];
+} DirectorySystem;
+
+void createUserDirectory(DirectorySystem *system, const char *username) {
+    int i;
+    for (i = 0; i < MAX_USERS; i++) {
+        UserDirectory *user = &(system->users[i]);
+        if (strcmp(user->username, "") == 0) {
+            strcpy(user->username, username);
+            user->fileCount = 0;
+            printf("User directory '%s' created.\n", username);
+            return;
+        }
+    }
+    printf("Maximum number of users reached.\n");
+}
+
+UserDirectory *getUserDirectory(DirectorySystem *system, const char *username) {
+    int i;
+    for (i = 0; i < MAX_USERS; i++) {
+        UserDirectory *user = &(system->users[i]);
+        if (strcmp(user->username, username) == 0) {
+            return user;
+        }
+    }
+    return NULL;
+}
+
+void createFile(UserDirectory *user, const char *filename) {
+    if (user->fileCount < MAX_FILES) {
+        strcpy(user->files[user->fileCount], filename);
+        user->fileCount++;
+        printf("File '%s' created in directory '%s'.\n", filename, user->username);
+    } else {
+        printf("Maximum number of files reached for user '%s'.\n", user->username);
+    }
+}
+
+int main() {
+    DirectorySystem system;
+    int i;
+
+
+    for (i = 0; i < MAX_USERS; i++) {
+        strcpy(system.users[i].username, "");
+        system.users[i].fileCount = 0;
+    }
+
+    createUserDirectory(&system, "user1");
+    createUserDirectory(&system, "user2");
+    createUserDirectory(&system, "user3");
+
+    UserDirectory *user1 = getUserDirectory(&system, "user1");
+    UserDirectory *user2 = getUserDirectory(&system, "user2");
+    UserDirectory *user3 = getUserDirectory(&system, "user3");
+
+    createFile(user1, "file1.txt");
+    createFile(user1, "file2.txt");
+    createFile(user2, "file1.txt");
+    createFile(user2, "file2.txt");
+    createFile(user3, "file1.txt");
+    createFile(user3, "file2.txt");
+
+    return 0;
+}
