@@ -1,0 +1,87 @@
+#include <stdio.h>
+
+#define FILE_SIZE 100
+#define BLOCK_SIZE 1
+
+int contiguousAllocation(int position) {
+    int firstBlock = 0;
+    int lastBlock = FILE_SIZE - 1;
+    int newBlock = position;
+
+    if (newBlock < firstBlock || newBlock > lastBlock) {
+        printf("Error: Invalid position for contiguous allocation.\n");
+        return -1;
+    }
+
+    return 2; 
+}
+
+int linkedAllocation(int position) {
+    int newBlock = position;
+    int blockToRead = 0;
+
+    if (newBlock < 0 || newBlock >= FILE_SIZE) {
+        printf("Error: Invalid position for linked allocation.\n");
+        return -1;
+    }
+
+    while (blockToRead != newBlock) {
+        blockToRead++;
+    }
+
+    return blockToRead + 1; 
+}
+
+int indexedAllocation(int position) {
+    int indexBlock = 0;
+    int blocksPerIndex = BLOCK_SIZE / sizeof(int);
+    int indexSize = FILE_SIZE / BLOCK_SIZE / blocksPerIndex;
+    int newBlock = position;
+
+    if (newBlock < 0 || newBlock >= FILE_SIZE) {
+        printf("Error: Invalid position for indexed allocation.\n");
+        return -1;
+    }
+
+    if (newBlock < indexSize) {
+        return 1; 
+    }
+
+    return 2; 
+}
+
+int main() {
+    int position;
+    char allocationType;
+
+    printf("Enter the position to add the block (0-%d): ", FILE_SIZE - 1);
+    scanf("%d", &position);
+    getchar();
+
+    printf("Enter the allocation type (C for contiguous, L for linked, I for indexed): ");
+    scanf("%c", &allocationType);
+    getchar();
+
+    int diskIO;
+
+    switch (allocationType) {
+        case 'C':
+            diskIO = contiguousAllocation(position);
+            break;
+        case 'L':
+            diskIO = linkedAllocation(position);
+            break;
+        case 'I':
+            diskIO = indexedAllocation(position);
+            break;
+        default:
+            printf("Error: Invalid allocation type.\n");
+            return 1;
+    }
+
+    if (diskIO != -1) {
+        printf("Number of disk I/O operations required: %d\n", diskIO);
+    }
+
+    return 0;
+}
