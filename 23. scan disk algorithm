@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void sort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(&arr[j], &arr[j + 1]);
+            }
+        }
+    }
+}
+
+int main() {
+    int queue[MAX], head, n, i, j, k, seek = 0, max, diff;
+    float avg;
+
+    printf("Enter the size of queue: ");
+    scanf("%d", &n);
+
+    printf("Enter the queue: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &queue[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+
+    queue[n] = head;
+    n++;
+
+    sort(queue, n);
+
+    max = queue[n - 1];
+
+    for (i = 0; i < n; i++) {
+        if (head == queue[i]) {
+            break;
+        }
+    }
+
+    for (j = i; j >= 0; j--) {
+        printf("%d -> ", queue[j]);
+    }
+
+    printf("0 -> ");
+
+    for (j = i + 1; j < n; j++) {
+        printf("%d -> ", queue[j]);
+    }
+
+    printf("%d\n", max);
+
+    for (k = i; k >= 0; k--) {
+        diff = abs(head - queue[k]);
+        seek += diff;
+        head = queue[k];
+    }
+
+    head = 0;
+    seek += max;
+
+    for (k = i + 1; k < n; k++) {
+        diff = abs(head - queue[k]);
+        seek += diff;
+        head = queue[k];
+    }
+
+    avg = seek / (float)n;
+
+    printf("Average head movement: %.2f\n", avg);
+
+    return 0;
+}
