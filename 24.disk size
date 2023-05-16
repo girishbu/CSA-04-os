@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+#define BLOCK_SIZE 8192 
+#define POINTER_SIZE 4   
+#define DIRECT_BLOCKS 12
+#define SINGLE_INDIRECT_BLOCKS (BLOCK_SIZE / POINTER_SIZE)
+#define DOUBLE_INDIRECT_BLOCKS (SINGLE_INDIRECT_BLOCKS * SINGLE_INDIRECT_BLOCKS)
+#define TRIPLE_INDIRECT_BLOCKS (DOUBLE_INDIRECT_BLOCKS * SINGLE_INDIRECT_BLOCKS)
+
+int main() {
+  
+    int max_direct_blocks = DIRECT_BLOCKS;
+    int max_single_indirect_blocks = SINGLE_INDIRECT_BLOCKS;
+    int max_double_indirect_blocks = SINGLE_INDIRECT_BLOCKS + (SINGLE_INDIRECT_BLOCKS * SINGLE_INDIRECT_BLOCKS);
+    int max_triple_indirect_blocks = SINGLE_INDIRECT_BLOCKS + (SINGLE_INDIRECT_BLOCKS * SINGLE_INDIRECT_BLOCKS) + (SINGLE_INDIRECT_BLOCKS * SINGLE_INDIRECT_BLOCKS * SINGLE_INDIRECT_BLOCKS);
+
+
+    long long max_file_size = 0;
+    max_file_size += max_direct_blocks * BLOCK_SIZE;
+    max_file_size += max_single_indirect_blocks * BLOCK_SIZE;
+    max_file_size += max_double_indirect_blocks * BLOCK_SIZE;
+    max_file_size += max_triple_indirect_blocks * BLOCK_SIZE;
+
+    printf("Maximum file size: %lld bytes\n", max_file_size);
+    printf("Maximum file size: %.2f KB\n", max_file_size / 1024.0);
+    printf("Maximum file size: %.2f MB\n", max_file_size / (1024.0 * 1024.0));
+    printf("Maximum file size: %.2f GB\n", max_file_size / (1024.0 * 1024.0 * 1024.0));
+
+    return 0;
+}
