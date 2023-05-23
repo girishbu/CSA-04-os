@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_TRACKS 100
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int SCAN(int tracks[], int num_tracks, int head_pos) {
+    int i, j, total_movement = 0;
+    
+    qsort(tracks, num_tracks, sizeof(int), compare);
+    
+    for (i = 0; i < num_tracks; i++) {
+        if (tracks[i] >= head_pos)
+            break;
+    }
+    
+    total_movement += head_pos - tracks[0];
+    
+    for (j = i; j < num_tracks; j++) {
+        total_movement += tracks[j] - tracks[j-1];
+    }
+    
+    total_movement += tracks[num_tracks - 1] - tracks[i-1];
+    
+    return total_movement;
+}
+
+int main() {
+    int tracks[MAX_TRACKS];
+    int num_tracks, head_pos;
+    float average_movement;
+    
+    printf("Enter the number of tracks: ");
+    scanf("%d", &num_tracks);
+    
+    if (num_tracks <= 0 || num_tracks > MAX_TRACKS) {
+        printf("Invalid number of tracks. Program exiting...\n");
+        return 1;
+    }
+    
+    printf("Enter the track positions:\n");
+    for (int i = 0; i < num_tracks; i++) {
+        scanf("%d", &tracks[i]);
+    }
+    
+    printf("Enter the initial head position: ");
+    scanf("%d", &head_pos);
+    
+    int total_movement = SCAN(tracks, num_tracks, head_pos);
+    
+    average_movement = (float)total_movement / num_tracks;
+    
+    printf("Average head movement: %.2f\n", average_movement);
+    
+    return 0;
+}
