@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define TOTAL_BLOCKS 16
+#define INODE_BLOCKS 8
+#define FILE_BLOCKS (TOTAL_BLOCKS - INODE_BLOCKS)
+
+void allocateBlocks(int startBlock, int numBlocks, bool blocks[]) {
+    for (int i = startBlock; i < startBlock + numBlocks; i++) {
+        blocks[i] = true;
+    }
+}
+
+bool areBlocksFree(int startBlock, int numBlocks, bool blocks[]) {
+    for (int i = startBlock; i < startBlock + numBlocks; i++) {
+        if (blocks[i] == true) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    bool blocks[TOTAL_BLOCKS] = {false}; 
+
+    
+    int fileSize = 6; // 6 KB file
+    int startBlock = -1;
+    int numBlocks = 0;
+
+    for (int i = INODE_BLOCKS; i < TOTAL_BLOCKS - fileSize + 1; i++) {
+        if (areBlocksFree(i, fileSize, blocks)) {
+            startBlock = i;
+            numBlocks = fileSize;
+            break;
+        }
+    }
+
+    if (startBlock == -1) {
+        printf("Not enough contiguous blocks available for file allocation.\n");
+        return 0;
+    }
+
+    allocateBlocks(startBlock, numBlocks, blocks);
+
+    printf("File allocated successfully!\n");
+    printf("Start Block: %d\n", startBlock);
+    printf("Number of Blocks: %d\n", numBlocks);
+
+    return 0;
+}
