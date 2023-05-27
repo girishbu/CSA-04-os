@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+
+int absDiff(int a, int b) {
+    return abs(a - b);
+}
+
+int findClosestTrack(int tracks[], int numTracks, int currentTrack, bool visited[]) {
+    int minDiff = INT_MAX;
+    int closestTrack = -1;
+
+    for (int i = 0; i < numTracks; i++) {
+        if (!visited[i] && absDiff(tracks[i], currentTrack) < minDiff) {
+            minDiff = absDiff(tracks[i], currentTrack);
+            closestTrack = i;
+        }
+    }
+
+    return closestTrack;
+}
+
+void sstf(int tracks[], int numTracks, int startTrack) {
+    bool visited[numTracks];
+    for (int i = 0; i < numTracks; i++) {
+        visited[i] = false;
+    }
+
+    int headMovement = 0;
+    int currentTrack = startTrack;
+
+    for (int i = 0; i < numTracks; i++) {
+        int closestTrack = findClosestTrack(tracks, numTracks, currentTrack, visited);
+
+        if (closestTrack == -1) {
+            break;
+        }
+
+        visited[closestTrack] = true;
+        headMovement += absDiff(tracks[closestTrack], currentTrack);
+        currentTrack = tracks[closestTrack];
+    }
+
+    printf("Total head movement: %d\n", headMovement);
+    printf("Average head movement: %.2f\n", (float) headMovement / numTracks);
+}
+
+int main() {
+    int tracks[] = {55, 58, 60, 70, 18};
+    int numTracks = sizeof(tracks) / sizeof(tracks[0]);
+    int startTrack = 50;
+
+    printf("SSTF Disk Scheduling Algorithm:\n");
+    sstf(tracks, numTracks, startTrack);
+
+    return 0;
+}
