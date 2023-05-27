@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int absDiff(int a, int b) {
+    return (a > b) ? (a - b) : (b - a);
+}
+
+void look(int queue[], int n, int head) {
+    int totalHeadMovement = 0;
+    int direction = (queue[0] > head) ? 1 : -1;
+
+    
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (queue[j] > queue[j + 1]) {
+                int temp = queue[j];
+                queue[j] = queue[j + 1];
+                queue[j + 1] = temp;
+            }
+        }
+    }
+
+    int index = 0;
+    for (int i = 0; i < n; i++) {
+        if (direction == 1 && queue[i] >= head) {
+            index = i;
+            break;
+        } else if (direction == -1 && queue[i] > head) {
+            index = i - 1;
+            break;
+        }
+    }
+
+    printf("Sequence of disk access:\n%d ", head);
+
+    for (int i = index; i >= 0; i--) {
+        printf("%d ", queue[i]);
+        totalHeadMovement += absDiff(queue[i], head);
+        head = queue[i];
+    }
+
+    for (int i = index + 1; i < n; i++) {
+        printf("%d ", queue[i]);
+        totalHeadMovement += absDiff(queue[i], head);
+        head = queue[i];
+    }
+
+    printf("\nTotal head movement: %d\n", totalHeadMovement);
+    printf("Average head movement: %.2f\n", (float)totalHeadMovement / n);
+}
+
+int main() {
+    int queue[] = {55, 58, 60, 70, 18};
+    int n = sizeof(queue) / sizeof(queue[0]);
+    int head = 50;
+
+    printf("LOOK Disk Scheduling Algorithm\n");
+    look(queue, n, head);
+
+    return 0;
+}
