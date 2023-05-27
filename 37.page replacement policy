@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_PAGE_FRAMES 10
+
+int findOptimalPage(int pages[], int pageFrames[], int start, int end) {
+    int index = -1;
+    int farthest = start;
+
+    for (int i = 0; i < MAX_PAGE_FRAMES; i++) {
+        int j;
+        for (j = start; j < end; j++) {
+            if (pageFrames[i] == pages[j]) {
+                if (j > farthest) {
+                    farthest = j;
+                    index = i;
+                }
+                break;
+            }
+        }
+        if (j == end) {
+            return i;
+        }
+    }
+
+    return (index == -1) ? 0 : index;
+}
+
+int main() {
+    int pageFrames[MAX_PAGE_FRAMES] = {0};
+    int pages[] = {4, 1, 2, 4, 3, 2, 1, 5};
+    int numPages = sizeof(pages) / sizeof(pages[0]);
+    int numPageFrames = 3;
+    int pageFaults = 0;
+
+    printf("Optimal Page Replacement Algorithm\n");
+
+    for (int i = 0; i < numPages; i++) {
+        int currentPage = pages[i];
+
+        bool pageFound = false;
+        for (int j = 0; j < numPageFrames; j++) {
+            if (pageFrames[j] == currentPage) {
+                pageFound = true;
+                break;
+            }
+        }
+
+        if (!pageFound) {
+            int index = findOptimalPage(pages, pageFrames, i + 1, numPages);
+            pageFrames[index] = currentPage;
+            pageFaults++;
+        }
+
+        printf("Page reference: %d\n", currentPage);
+        printf("Current Page Frames: ");
+        for (int j = 0; j < numPageFrames; j++) {
+            printf("%d ", pageFrames[j]);
+        }
+        printf("\n");
+    }
+
+    printf("Total page faults: %d\n", pageFaults);
+
+    return 0;
+}
