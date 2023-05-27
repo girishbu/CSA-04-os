@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+void calculateTimes(int n, int burstTime[]) {
+    int waitingTime[n], turnaroundTime[n];
+    float totalWaitingTime = 0, totalTurnaroundTime = 0;
+
+    waitingTime[0] = 0;
+
+    
+    for (int i = 1; i < n; i++) {
+        waitingTime[i] = 0;
+        for (int j = 0; j < i; j++) {
+            waitingTime[i] += burstTime[j];
+        }
+    }
+
+    
+    for (int i = 0; i < n; i++) {
+        turnaroundTime[i] = burstTime[i] + waitingTime[i];
+        totalWaitingTime += waitingTime[i];
+        totalTurnaroundTime += turnaroundTime[i];
+    }
+
+    printf("Process\tBurst Time\tWaiting Time\tTurnaround Time\n");
+
+    for (int i = 0; i < n; i++) {
+        printf("%d\t\t%d\t\t%d\t\t%d\n", i, burstTime[i], waitingTime[i], turnaroundTime[i]);
+    }
+
+    printf("\nAverage Waiting Time: %.2f\n", totalWaitingTime / n);
+    printf("Average Turnaround Time: %.2f\n", totalTurnaroundTime / n);
+}
+
+int main() {
+    int n = 3; 
+    int burstTime[] = {2, 4, 8};
+
+    calculateTimes(n, burstTime);
+
+    return 0;
+}
