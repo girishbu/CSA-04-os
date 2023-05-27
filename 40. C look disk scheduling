@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int absDiff(int a, int b) {
+    return (a > b) ? (a - b) : (b - a);
+}
+
+void clook(int queue[], int n, int head) {
+    int totalHeadMovement = 0;
+
+    
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (queue[j] > queue[j + 1]) {
+                int temp = queue[j];
+                queue[j] = queue[j + 1];
+                queue[j + 1] = temp;
+            }
+        }
+    }
+
+    int index = 0;
+    for (int i = 0; i < n; i++) {
+        if (queue[i] >= head) {
+            index = i;
+            break;
+        }
+    }
+
+    printf("Sequence of disk access:\n%d ", head);
+
+    for (int i = index; i < n; i++) {
+        printf("%d ", queue[i]);
+        totalHeadMovement += absDiff(queue[i], head);
+        head = queue[i];
+    }
+
+    for (int i = 0; i < index; i++) {
+        printf("%d ", queue[i]);
+        totalHeadMovement += absDiff(queue[i], head);
+        head = queue[i];
+    }
+
+    printf("\nTotal head movement: %d\n", totalHeadMovement);
+    printf("Average head movement: %.2f\n", (float)totalHeadMovement / n);
+}
+
+int main() {
+    int queue[] = {55, 58, 60, 70, 18};
+    int n = sizeof(queue) / sizeof(queue[0]);
+    int head = 50;
+
+    printf("CLOOK Disk Scheduling Algorithm\n");
+    clook(queue, n, head);
+
+    return 0;
+}
